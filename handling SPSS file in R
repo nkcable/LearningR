@@ -1,0 +1,22 @@
+library(tidyverse)
+library(haven)
+serv<- read_sav("~/Desktop/service_provider.sav")
+serv %>%
+  mutate (as.integer(v4_1, v4_2, v4_3, v4_4, v4_5, v4_6, v4_7, v4_8, v4_9), 
+          rates= v4_1+ v4_2 + v4_3 +v4_4 +v4_5+ v4_6+ v4_7+ v4_8 +v4_9) %>%
+  mutate(age2=v7*10+5) %>%
+  group_by(v7) %>%
+  summarize(meanrates= mean(rates),
+            sdrates = sd(rates),
+            medianrates= median(rates),
+            minrates= min(rates),
+            maxrates = max(rates))
+
+ggplot(serv, aes(v4, v3)) + geom_point()+
+  geom_smooth(method='lm', se=FALSE)
+cor.test(serv$v3, serv$v4)
+
+m1 <- lm(v4~v3+v7, data=serv)
+summary(m1)
+vif(m1)
+hist(resid(m1))
